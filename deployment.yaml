@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+        resources:  # Add or modify this section
+          requests:
+            memory: "256Mi"  # Request 256 MiB of memory
+            cpu: "250m"      # Request 250 millicpu (0.25 CPU core)
+          limits:
+            memory: "512Mi"  # Limit memory usage to 512 MiB
+            cpu: "500m"      # Limit CPU usage to 500 millicpu (0.5 CPU core)
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
