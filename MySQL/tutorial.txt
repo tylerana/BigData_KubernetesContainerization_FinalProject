@@ -1,0 +1,25 @@
+# To build a phpadmin container:
+docker build -t mycustomphpmyadmin .
+
+# To start the MySQL Container:
+docker run --name mymysql -e MYSQL_ROOT_PASSWORD=root_password -d mysql:5.7
+
+# Link the MySQL server and phpAdmin:
+docker run --name myphpadmin -d --link mymysql:db -p 8080:80 phpmyadmin/phpmyadmin
+
+# to run myphpadmin on a different port:
+docker run --name myphpadmin1 -d --link mymysql:db -p 8081:80 phpmyadmin/phpmyadmin
+
+# Access the link in Incognito Mode
+http://localhost:8080
+
+
+# deploy the phpadmin service and deployment
+kubectl apply -f php_deployment.yaml
+kubectl apply -f php_service.yaml
+
+# get external IP
+kubectl get service phpmyadmin
+# enter this link into browser to access mysql database
+
+# need bare metal load balancer METALLB installed or do NodePort
